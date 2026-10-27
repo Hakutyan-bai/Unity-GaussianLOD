@@ -1,0 +1,14 @@
+Library/
+Temp/
+Logs/
+Builds/
+Distribution/
+obj/
+.vs/
+.idea/
+__pycache__/
+*.pyc
+*.unitypackage
+*.zip
+*.partial-*
+.DS_Store

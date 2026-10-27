@@ -1,0 +1,59 @@
+{
+  "release": "v0.1",
+  "packageVersion": "0.1.0",
+  "dateLocal": "2026-10-28",
+  "unity": "2022.3.62f3c1",
+  "platform": "Windows x64",
+  "graphicsAPI": "Direct3D12",
+  "upmEditorTests": {
+    "total": 38,
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0
+  },
+  "importedResourcePackageEditorTests": {
+    "result": "Passed",
+    "total": 38,
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0
+  },
+  "importedResourcePackagePlayModeTests": {
+    "result": "Passed",
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "export": {
+    "status": "passed",
+    "unity": "2022.3.62f3c1",
+    "nativeExtracted": true,
+    "shadersSupported": true,
+    "syntheticDemoIncluded": true
+  },
+  "import": {
+    "status": "passed",
+    "resourcePackageImported": true,
+    "runtimeAssemblyLoaded": true
+  },
+  "importedSyntheticDemo": {
+    "status": "passed",
+    "coveredNodes": 8,
+    "visibleSplats": 3276,
+    "coloredPixels": 2952,
+    "unloadedResources": true
+  },
+  "resourcePackageAssetPaths": 95,
+  "nativeSHA256": "5f8450254e3d3c9700c414db2d3328999d421dc47b64b639b7fbf5aa8b733cee",
+  "dependencies": "URP 14.0.12, Newtonsoft JSON 3.2.1, Unity Test Framework 1.1.33; isolated projects used local cached packages.",
+  "notVerified": [
+    "PICO 4 Ultra Android/Vulkan/XR",
+    "iPhone 14 iOS/Metal/IL2CPP"
+  ],
+  "excludedFromPublication": [
+    "User campus PLY/cache datasets and screenshots",
+    "Host project and other rendering plugins",
+    "Independent camera destination UI"
+  ]
+}

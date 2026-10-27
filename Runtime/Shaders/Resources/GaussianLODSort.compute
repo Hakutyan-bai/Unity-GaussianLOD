@@ -1,0 +1,56 @@
+#pragma kernel Initialize
+#pragma kernel Histogram
+#pragma kernel Prefix
+#pragma kernel Scatter
+#include "GaussianLODCommon.hlsl"
+StructuredBuffer<GaussianRecord> _Splats;
+StructuredBuffer<uint2> _Visible;
+StructuredBuffer<uint2> _Source;
+RWStructuredBuffer<uint2> _Destination;
+RWStructuredBuffer<uint> _Histogram, _Offsets, _Totals;
+float4x4 _View;
+uint _Count, _Groups, _Shift;
+groupshared uint counts[16];
+groupshared uint masks[128];
+
+// Stable radix-16, portable SM5, no subgroup/wave intrinsics. Negative view Z sorts far to near.
+[numthreads(256,1,1)]
+void Initialize(uint id:SV_DispatchThreadID)
+{
+    if(id>=_Count)return;
+    float3 p=_Splats[_Visible[id].x].positionOpacity.xyz;
+    uint bits=asuint(mul(_View,float4(p,1)).z);
+    uint key=(bits&0x80000000u)?~bits:(bits^0x80000000u);
+    _Destination[id]=uint2(key,id);
+}
+[numthreads(256,1,1)]
+void Histogram(uint id:SV_DispatchThreadID,uint lane:SV_GroupIndex,uint3 gid:SV_GroupID)
+{
+    if(lane<16)counts[lane]=0;
+    GroupMemoryBarrierWithGroupSync();
+    if(id<_Count)InterlockedAdd(counts[(_Source[id].x>>_Shift)&15],1);
+    GroupMemoryBarrierWithGroupSync();
+    if(lane<16)_Histogram[gid.x*16+lane]=counts[lane];
+}
+[numthreads(16,1,1)]
+void Prefix(uint digit:SV_GroupIndex)
+{
+    uint sum=0;
+    for(uint g=0;g<_Groups;g++) { _Offsets[g*16+digit]=sum;sum+=_Histogram[g*16+digit]; }
+    _Totals[digit]=sum;
+}
+[numthreads(256,1,1)]
+void Scatter(uint id:SV_DispatchThreadID,uint lane:SV_GroupIndex,uint3 gid:SV_GroupID)
+{
+    if(lane<128)masks[lane]=0;
+    GroupMemoryBarrierWithGroupSync();
+    uint2 pair=uint2(0,0);uint digit=0;
+    if(id<_Count) { pair=_Source[id];digit=(pair.x>>_Shift)&15;InterlockedOr(masks[digit*8+lane/32],1u<<(lane%32)); }
+    GroupMemoryBarrierWithGroupSync();
+    if(id>=_Count)return;
+    uint rank=0;
+    for(uint word=0;word<lane/32;word++)rank+=countbits(masks[digit*8+word]);
+    rank+=countbits(masks[digit*8+lane/32]&((1u<<(lane%32))-1u));
+    uint base=0;for(uint d=0;d<digit;d++)base+=_Totals[d];
+    _Destination[base+_Offsets[gid.x*16+digit]+rank]=pair;
+}

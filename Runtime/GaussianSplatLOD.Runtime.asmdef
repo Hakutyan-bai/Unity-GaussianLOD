@@ -1,0 +1,6 @@
+{
+  "name": "GaussianSplatLOD.Runtime",
+  "references": ["Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Universal.Runtime"],
+  "allowUnsafeCode": true,
+  "autoReferenced": true
+}

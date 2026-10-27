@@ -1,0 +1,10 @@
+{
+  "name": "GaussianSplatLOD.EditorTests",
+  "references": ["GaussianSplatLOD.Runtime", "GaussianSplatLOD.Editor"],
+  "overrideReferences": true,
+  "precompiledReferences": ["nunit.framework.dll", "Newtonsoft.Json.dll"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "allowUnsafeCode": true,
+  "autoReferenced": false
+}

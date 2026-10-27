@@ -1,0 +1,13 @@
+{
+  "name": "com.yourcompany.gaussian-splat-lod",
+  "version": "0.1.0",
+  "displayName": "Unity Gaussian Splat LOD",
+  "description": "Aholo Chunk LOD conversion, binary PLY streaming and covariance Gaussian rendering for Windows.",
+  "unity": "2022.3",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/Hakutyan-bai/Unity-GaussianLOD.git" },
+  "documentationUrl": "https://github.com/Hakutyan-bai/Unity-GaussianLOD#readme",
+  "changelogUrl": "https://github.com/Hakutyan-bai/Unity-GaussianLOD/blob/main/CHANGELOG.md",
+  "dependencies": { "com.unity.nuget.newtonsoft-json": "3.0.2", "com.unity.render-pipelines.universal": "14.0.11" },
+  "samples": [{ "displayName": "Gaussian LOD Demo", "description": "Use Tools > Gaussian Splat LOD > Create Demo to generate a portable demo.", "path": "Samples~/Demo" }]
+}
