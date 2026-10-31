@@ -112,6 +112,9 @@ namespace GaussianSplatLOD.Tests
             var go=new GameObject("LOD continuity regression");go.SetActive(false);
             var cam=new GameObject("LOD continuity camera").AddComponent<Camera>();cam.enabled=false;
             var r=go.AddComponent<GaussianLODRenderer>();r.maxGPUMemory=64;r.maxCPUCache=32;r.maxVisibleSplats=90000;r.enableAsyncLoading=false;r.uploadSplatsPerFrame=128;r.enableDynamicLOD=false;r.enableFrustumCulling=false;
+            // This regression checks the common distant frontier. Near-quality protection
+            // intentionally permits a nearby region to refine ahead of that frontier.
+            r.nearQualityDistance=0;
             cam.transform.position=new Vector3(0,12,-16);cam.transform.LookAt(Vector3.zero);
             using var session=new GaussianStreamingSession(r,new GaussianLODLoader(path));session.InitializeCandidates();
             try

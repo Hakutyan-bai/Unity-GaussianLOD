@@ -1,0 +1,15 @@
+<linker>
+  <!-- Json.NET populates these fields by reflection in IL2CPP players. -->
+  <assembly fullname="GaussianSplatLOD.Runtime">
+    <type fullname="GaussianSplatLOD.GaussianLODMetadata" preserve="all" />
+    <type fullname="GaussianSplatLOD.GaussianLODNode" preserve="all" />
+    <type fullname="GaussianSplatLOD.GaussianLODRange" preserve="all" />
+    <type fullname="GaussianSplatLOD.GaussianBox" preserve="all" />
+    <type fullname="GaussianSplatLOD.GaussianDeploymentManifest" preserve="all" />
+    <type fullname="GaussianSplatLOD.GaussianDeploymentManifest/FileEntry" preserve="all" />
+    <type fullname="GaussianSplatLOD.GaussianDeploymentManifest/RangeEntry" preserve="all" />
+    <!-- The optional diagnostics assembly reads these public counters by name. -->
+    <type fullname="GaussianSplatLOD.GaussianStreamingMetrics" preserve="all" />
+    <type fullname="GaussianSplatLOD.GaussianLODRenderer" preserve="all" />
+  </assembly>
+</linker>

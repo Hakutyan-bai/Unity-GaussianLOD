@@ -12,13 +12,20 @@ Shader "Gaussian Splat LOD/Gaussian"
             #pragma target 5.0
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ STEREO_INSTANCING_ON STEREO_MULTIVIEW_ON
+            // Splat instance IDs address our GPU records, not Unity object-matrix arrays.
+            #define UNITY_DONT_INSTANCE_OBJECT_MATRICES
             #include "UnityCG.cginc"
             #include "GaussianLODCommon.hlsl"
             StructuredBuffer<GaussianRecord> _Splats;
-            StructuredBuffer<uint2> _Visible, _Order;
+            StructuredBuffer<uint2> _Visible, _Order, _OrderRight;
             StructuredBuffer<float> _Fades;
             float4x4 _Model, _View, _Projection;
             float4 _Viewport, _LocalCamera;
+            float4x4 _EyeViews[2], _EyeProjections[2];
+            float4 _EyeViewports[2], _EyeCameras[2];
+            int _ViewCount, _UseStereoMatrices, _StereoOrderSeparate;
             float _RenderScale, _OpacityMultiplier;
             int _SHDegree, _DebugLOD, _Orthographic, _UseCustomProjection;
             float ScalarSH(GaussianRecord g,int i) { return g.sh[i/4][i%4]; }
@@ -36,22 +43,54 @@ Shader "Gaussian Splat LOD/Gaussian"
             {
                 if(l==0)return float3(1,.2,.05);if(l==1)return float3(1,.85,.1);if(l==2)return float3(.1,1,.3);if(l==3)return float3(0,.7,1);return float3(.3,.2,1);
             }
-            struct Varyings { float4 pos:SV_POSITION;float2 uv:TEXCOORD0;float4 color:COLOR0;nointerpolation float fade:TEXCOORD1; };
-            Varyings vert(uint vertex:SV_VertexID,uint instance:SV_InstanceID)
+            struct Attributes
             {
+                uint vertex:SV_VertexID;
+                #if defined(UNITY_INSTANCING_ENABLED) || defined(UNITY_PROCEDURAL_INSTANCING_ENABLED) || defined(UNITY_STEREO_INSTANCING_ENABLED)
+                    UNITY_VERTEX_INPUT_INSTANCE_ID
+                #else
+                    uint instanceID:SV_InstanceID;
+                #endif
+            };
+            struct Varyings
+            {
+                float4 pos:SV_POSITION;float2 uv:TEXCOORD0;float4 color:COLOR0;nointerpolation float fade:TEXCOORD1;
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+            Varyings vert(Attributes input)
+            {
+                UNITY_SETUP_INSTANCE_ID(input);
                 Varyings o=(Varyings)0;
-                uint2 ref=_Visible[_Order[instance].y];
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                uint instance=input.instanceID, eye=0, vertex=input.vertex;
+                #if defined(UNITY_INSTANCING_ENABLED) || defined(UNITY_PROCEDURAL_INSTANCING_ENABLED) || defined(UNITY_STEREO_INSTANCING_ENABLED)
+                    instance=unity_InstanceID;
+                #endif
+                #if defined(UNITY_STEREO_INSTANCING_ENABLED) || defined(UNITY_STEREO_MULTIVIEW_ENABLED) || defined(UNITY_SINGLE_PASS_STEREO)
+                    eye=unity_StereoEyeIndex;
+                #endif
+                uint2 sorted=eye==1 && _StereoOrderSeparate!=0 ? _OrderRight[instance] : _Order[instance];
+                uint2 ref=_Visible[sorted.y];
                 GaussianRecord g=_Splats[ref.x];
                 // Match Unity's actual render target (Game View, Scene View, URP intermediate,
                 // or explicit RT). camera.targetTexture alone cannot determine its Y flip.
                 float4x4 projection=_UseCustomProjection!=0?_Projection:UNITY_MATRIX_P;
-                float4x4 mv=mul(_View,_Model);
+                float4x4 viewMatrix=_View;
+                float4 viewport=_Viewport,localCamera=_LocalCamera;
+                if(_ViewCount>1)
+                {
+                    viewMatrix=_EyeViews[eye];viewport=_EyeViewports[eye];localCamera=_EyeCameras[eye];
+                    // URP supplies its actual per-eye GPU projection, including RT Y flip.
+                    // Built-in uses Unity's active stereo projection to retain target conventions.
+                    if(_UseStereoMatrices!=0)projection=_EyeProjections[eye];
+                }
+                float4x4 mv=mul(viewMatrix,_Model);
                 float3 view=mul(mv,float4(g.positionOpacity.xyz,1)).xyz;
                 if(view.z>=-0.001) {o.pos=float4(2,2,2,1);return o;}
                 float3 a=g.covarianceA.xyz,b=g.covarianceB.xyz;
                 float3x3 cov=float3x3(a.x,a.y,a.z,a.y,b.x,b.y,a.z,b.y,b.z);
                 float3x3 r=(float3x3)mv;cov=mul(r,mul(cov,transpose(r)))*(_RenderScale*_RenderScale);
-                float fx=projection._m00*_Viewport.x*.5,fy=projection._m11*_Viewport.y*.5;
+                float fx=projection._m00*viewport.x*.5,fy=projection._m11*viewport.y*.5;
                 float3 jx,jy;
                 if(_Orthographic!=0) {jx=float3(fx,0,0);jy=float3(0,fy,0);}
                 else {
@@ -68,9 +107,9 @@ Shader "Gaussian Splat LOD/Gaussian"
                 if(vertex==0||vertex==3)corner=float2(-1,-1);else if(vertex==1)corner=float2(1,-1);else if(vertex==2||vertex==4)corner=float2(1,1);else corner=float2(-1,1);
                 float2 uv=corner*3.7;
                 float2 displacement=uv.x*sqrt(l1)*axis+uv.y*sqrt(l2)*float2(-axis.y,axis.x);
-                float4 clipPos=mul(projection,float4(view,1));clipPos.xy+=displacement*2/_Viewport.xy*clipPos.w;
+                float4 clipPos=mul(projection,float4(view,1));clipPos.xy+=displacement*2/viewport.xy*clipPos.w;
                 o.pos=clipPos;o.uv=uv;
-                float3 d=g.positionOpacity.xyz-_LocalCamera.xyz;d*=rsqrt(max(dot(d,d),1e-20));
+                float3 d=g.positionOpacity.xyz-localCamera.xyz;d*=rsqrt(max(dot(d,d),1e-20));
                 float3 rgb=_DebugLOD!=0?LevelColor(ref.y&255):Shade(g,d);
                 o.fade=_Fades[ref.y>>8];
                 #ifndef UNITY_COLORSPACE_GAMMA
@@ -80,6 +119,7 @@ Shader "Gaussian Splat LOD/Gaussian"
             }
             half4 frag(Varyings i):SV_Target
             {
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                 float p=dot(i.uv,i.uv);clip(13.69-p);
                 float alpha=min(.99,i.color.a*exp(-.5*p));
                 // Interpolate optical depth, preserving opacity for identical coarse/fine layers.

@@ -19,6 +19,8 @@ namespace GaussianSplatLOD
         public float maxHeight=100;
         public float RotationX => pitch;
         float pitch,yaw;
+        bool cursorWasLocked;
+        int ignoreMouseThroughFrame=-1;
         double started;
         int frames;
         int renderedFrames;
@@ -27,14 +29,22 @@ namespace GaussianSplatLOD
         int minVisible=int.MaxValue,maxVisible;
         long maxCPU,maxGPU;
         void Start(){started=Time.realtimeSinceStartupAsDouble;benchmark=Array.IndexOf(Environment.GetCommandLineArgs(),"-gaussianBenchmark")>=0;Application.runInBackground=true;ReadAngles();if(!benchmark){ClampHeight();if(lockCursorOnStart)CaptureCursor();}}
-        void ReadAngles()
+        void OnEnable()
+        {
+            // Navigation can change the Transform while this controller is paused.
+            ReadAngles(false);
+            cursorWasLocked=false;
+            ignoreMouseThroughFrame=Time.frameCount+1;
+        }
+        void ReadAngles(bool clampPitch=true)
         {
             NormalizePitchLimits();
             // Recover viewing direction independently of Euler roll; always keep world-up upright.
             var forward=transform.forward;
             yaw=Mathf.Atan2(forward.x,forward.z)*Mathf.Rad2Deg;
             pitch=Mathf.Asin(Mathf.Clamp(-forward.y,-1,1))*Mathf.Rad2Deg;
-            pitch=Mathf.Clamp(pitch,minRotationX,maxRotationX);transform.rotation=Quaternion.Euler(pitch,yaw,0);
+            if(clampPitch)pitch=Mathf.Clamp(pitch,minRotationX,maxRotationX);
+            transform.rotation=Quaternion.Euler(pitch,yaw,0);
         }
         void NormalizePitchLimits()
         {
@@ -51,19 +61,28 @@ namespace GaussianSplatLOD
         public void ApplyLook(float horizontal,float vertical)
         {
             yaw+=horizontal*mouseSensitivity;
-            pitch=Mathf.Clamp(pitch-vertical*mouseSensitivity,minRotationX,maxRotationX);
+            // An external look-at may be outside the manual pitch limits. Zero input must
+            // preserve that view; real vertical input can bring it smoothly back in range.
+            pitch=Mathf.Clamp(pitch-vertical*mouseSensitivity,Mathf.Min(pitch,minRotationX),Mathf.Max(pitch,maxRotationX));
             transform.rotation=Quaternion.Euler(pitch,yaw,0);
         }
-        public void CaptureCursor(){ReadAngles();Cursor.lockState=CursorLockMode.Locked;Cursor.visible=false;}
-        public void ReleaseCursor(){Cursor.lockState=CursorLockMode.None;Cursor.visible=true;}
+        public void CaptureCursor(){ReadAngles(false);cursorWasLocked=true;ignoreMouseThroughFrame=Time.frameCount+1;Cursor.lockState=CursorLockMode.Locked;Cursor.visible=false;}
+        public void ReleaseCursor(){cursorWasLocked=false;Cursor.lockState=CursorLockMode.None;Cursor.visible=true;}
+        void ApplyMouseLook(Vector2 delta)
+        {
+            // Also handle cursor locking by a UI/navigation script instead of CaptureCursor.
+            if(!cursorWasLocked){ReadAngles(false);cursorWasLocked=true;ignoreMouseThroughFrame=Time.frameCount+1;}
+            if(Time.frameCount<=ignoreMouseThroughFrame)return;
+            ApplyLook(delta.x,delta.y);
+        }
         void OnDisable(){if(!benchmark)ReleaseCursor();}
         void OnApplicationFocus(bool focused){if(!focused&&!benchmark)ReleaseCursor();}
         void Update()
         {
             if(benchmark){Benchmark();return;}
             if(Input.GetKeyDown(KeyCode.Escape)){ReleaseCursor();return;}
-            if(Cursor.lockState!=CursorLockMode.Locked){if(Input.GetMouseButtonDown(0)&&Application.isFocused)CaptureCursor();return;}
-            ApplyLook(Input.GetAxisRaw("Mouse X"),Input.GetAxisRaw("Mouse Y"));
+            if(Cursor.lockState!=CursorLockMode.Locked){cursorWasLocked=false;if(Input.GetMouseButtonDown(0)&&Application.isFocused)CaptureCursor();return;}
+            ApplyMouseLook(new Vector2(Input.GetAxisRaw("Mouse X"),Input.GetAxisRaw("Mouse Y")));
             var move=new Vector3(Input.GetAxisRaw("Horizontal"),(Input.GetKey(KeyCode.E)?1:0)-(Input.GetKey(KeyCode.Q)?1:0),Input.GetAxisRaw("Vertical"));
             float speed=moveSpeed*(Input.GetKey(KeyCode.LeftShift)||Input.GetKey(KeyCode.RightShift)?sprintMultiplier:1);
             // WASD follows heading only. Looking up/down must not introduce vertical movement.

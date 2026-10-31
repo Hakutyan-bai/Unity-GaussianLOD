@@ -37,17 +37,23 @@ namespace GaussianSplatLOD.Editor
             Fields("enableRendering","enableDynamicLOD","coherentLOD","enableFrustumCulling","maxVisibleSplats","renderScale","opacityMultiplier","coordinateScale","positionOffset","rotationOffset");
             EditorGUILayout.Space();EditorGUILayout.LabelField("Streaming Settings (MiB)",EditorStyles.boldLabel);
             Fields("maxGPUMemory","maxCPUCache","preloadDistance","loadChunksPerFrame","enableAsyncLoading","preferRuntimeCache","maxConcurrentLoads","uploadSplatsPerFrame","lodHysteresis","lodTransitionSeconds");
+            EditorGUILayout.Space();EditorGUILayout.LabelField("Predictive Streaming",EditorStyles.boldLabel);
+            Fields("streamingOrigin","enablePrediction","predictionSeconds","maxPredictionDistance","teleportDistance","selectionInterval","headTurnThreshold","nearQualityDistance","lodPixelThreshold","priorityWeights");
+            EditorGUILayout.Space();EditorGUILayout.LabelField("Pipeline Budgets",EditorStyles.boldLabel);
+            Fields("maxResidentSplats","maxConcurrentIO","maxConcurrentDecodes","maxConcurrentUploads","gpuUploadBudgetMilliseconds","uploadBytesPerFrame","maxUploadSubmissions","cacheRetentionSeconds","cacheHighWatermark","cacheLowWatermark","prefetchMemoryFraction","enablePerformanceScheduling","targetRefreshRate");
             serializedObject.ApplyModifiedProperties();
             if(GUILayout.Button("Prepare Fast Loading Cache…"))try{GaussianRuntimeCacheWindow.Open(r.ResolveJsonPath());}catch(Exception e){error=e.Message;}
             EditorGUILayout.BeginHorizontal();
             if(GUILayout.Button("PICO 4 Ultra 起始预算")){Undo.RecordObject(r,"PICO loading preset");r.ApplyMobilePreset(true);EditorUtility.SetDirty(r);}
             if(GUILayout.Button("iPhone 14 起始预算")){Undo.RecordObject(r,"iPhone loading preset");r.ApplyMobilePreset(false);EditorUtility.SetDirty(r);}
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.HelpBox("移动预算用于真机调优起点；尚未验证 Android / Metal / XR。PICO APK 内的数据需先部署到 PersistentDataDirectory。缓存不改变 GPU 记录大小。",MessageType.Info);
+            EditorGUILayout.HelpBox("PICO 预算是可调测试起点，未承诺真机帧率。APK StreamingAssets 按需落盘到 persistentDataPath 后随机读取；近景 SH3 与 GPU 记录布局保持不变。",MessageType.Info);
             serializedObject.Update();
             EditorGUILayout.Space();EditorGUILayout.LabelField("Debug Settings",EditorStyles.boldLabel);Fields("showChunkBounds","showLODLevel","showStatistics","showLoadingStatus");serializedObject.ApplyModifiedProperties();
             if(r.Metadata!=null)EditorGUILayout.LabelField($"完整粗级覆盖 {r.CoveredNodes}/{r.Metadata.tree.Length} | 过渡 {r.TransitioningNodes} 分区 | 有效点数上限 {r.EffectivePointLimit:N0}");
-            if(r.showStatistics)EditorGUILayout.HelpBox($"Camera callbacks {r.FPS:F1} FPS | {r.VisibleSplats:N0} splats | {r.VisibleChunks} chunks\nGPU allocated {r.GPUBytes/1048576f:F1} MiB | CPU decoded/reserved {r.CPUBytes/1048576f:F1} MiB\nPending {r.PendingLoads} | Resident {r.ResidentRanges} | Cache hit {r.CacheHitRate:P1} | Disk reads {r.DiskReads}\nFast cache reads {r.RuntimeCacheReads} | PLY decodes {r.PLYReads}\nStreaming tick {r.LastUploadMilliseconds:F2} ms"+(r.BudgetLimited?"\n预算限制了覆盖或细化，当前维持可用 LOD。":""),MessageType.Info);
+            if(!string.IsNullOrEmpty(r.BudgetReason))EditorGUILayout.HelpBox(r.BudgetReason,MessageType.Warning);
+            if(!string.IsNullOrEmpty(r.InstallationStatus))EditorGUILayout.LabelField("Dataset installation",r.InstallationStatus+" "+r.InstallationProgress.ToString("P0"));
+            if(r.showStatistics)EditorGUILayout.HelpBox($"Application {r.FPS:F1} FPS | {r.VisibleSplats:N0} splats | {r.VisibleChunks} chunks\nGPU allocated {r.GPUBytes/1048576f:F1} MiB | CPU decoded/reserved {r.CPUBytes/1048576f:F1} MiB\nPending {r.PendingLoads} | Resident {r.ResidentRanges} | Cache hit {r.CacheHitRate:P1} | Disk reads {r.DiskReads}\nFast cache reads {r.RuntimeCacheReads} | PLY decodes {r.PLYReads}\nStreaming tick {r.LastUploadMilliseconds:F2} ms | actual upload submit {r.ActualUploadMilliseconds:F2} ms"+(r.BudgetLimited?"\n预算限制了覆盖或细化，当前维持可用 LOD。":""),MessageType.Info);
         }
     }
 }

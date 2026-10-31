@@ -1,0 +1,5 @@
+{
+  "name": "GaussianSplatLOD.Diagnostics",
+  "references": ["GaussianSplatLOD.Runtime", "Unity.ugui"],
+  "autoReferenced": true
+}

@@ -1,0 +1,64 @@
+{
+  "status": "passed",
+  "platform": "Windows Editor / normal Play Mode / desktop mono",
+  "api": "Direct3D12",
+  "unity": "2022.3.62f3c1",
+  "controller": {
+    "status": "passed",
+    "seconds": 1200.6888837,
+    "firstCoverageSeconds": 1.0003229000000147,
+    "minCoveredNodes": 52,
+    "sourcePoints": 7214556,
+    "visibleSplats": 848949,
+    "cpuBytes": 398274048,
+    "gpuBytes": 544504288,
+    "diskReads": 2155,
+    "cacheReads": 2142,
+    "error": null,
+    "api": "Direct3D12",
+    "unity": "2022.3.62f3c1",
+    "notes": "Normal DemoPICO Play Mode application frames, desktop mono, no XR initialization or APK. 1200-second timestamp route. No MCP diagnostics during measurement. Domain reload temporarily disabled only to retain this controller; original Editor options restored on exit. Device FPS and stereo are unverified."
+  },
+  "datasetSHA256": "add50148df21fd497129438255c05b756fd97530b4c3bdd64c521b5ae79f250b",
+  "sampleCount": 11708,
+  "lastSampleSeconds": 1199.9152,
+  "firstLoggedCoverageSeconds": 0.2776,
+  "coverageLossSamplesAfterFirstCoverage": 0,
+  "sampleSpacingSeconds": {
+    "median": 0.10180000000002565,
+    "p95": 0.10629999999991924,
+    "max": 0.22500000000002274
+  },
+  "steadySampledCPUFrameMs": {
+    "median": 2.8422,
+    "p95": 4.1364,
+    "max": 74.3985
+  },
+  "steadySampledGPUFrameMs": {
+    "median": 2.8549,
+    "p95": 3.8246,
+    "max": 12.5911
+  },
+  "steadySampledUploadSubmitMs": {
+    "median": 0.0,
+    "p95": 0.0,
+    "max": 3.4091
+  },
+  "maxCPUDecodedReservedBytes": 402185216,
+  "maxGPUBufferEstimateBytes": 544504288,
+  "maxUnityAllocatedBytes": 265425315,
+  "maxProcessPrivateBytes": 5394616320,
+  "privateMedianFirstMinuteBytes": 4533960704,
+  "privateMedianFiveToSixMinutesBytes": 5197674496.0,
+  "privateMedianLastMinuteBytes": 5393928192.0,
+  "finalMeanLoadMs": 57.3188,
+  "finalP95LoadMs": 222.315,
+  "finalCacheHit": 0.8086,
+  "finalPreloadHit": 1.0,
+  "finalDiskReads": 2154,
+  "notes": "Timestamp route in the actual application player loop; XR initialization disabled. CSV takes 10Hz snapshots, not every frame; reported maxima/P95 can miss spikes. FrameTimingManager values are application-frame samples, not per-pass GPU measurements. Unavailable values are -1 and excluded. OS page cache was not flushed. External process memory is sampled every10s. No PICO/Android/device90Hz or leak-free claim. Unity total allocation, plugin cache budgets, driver memory and process private bytes are different measures.",
+  "maxProcessWorkingSetBytes": 3593895936,
+  "privateMedianFirstToLastGrowthBytes": 859967488.0,
+  "privateMedianWarmToLastGrowthBytes": 196253696.0,
+  "scopeCaveat": "Normal Play Mode desktop mono, not PICO. Post-run Game View reading was1470x728; resolution was not locked to the short replay. Memory growth remains unresolved."
+}

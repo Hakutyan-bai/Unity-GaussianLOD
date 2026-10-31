@@ -1,32 +1,73 @@
 {
-  "release": "v0.1",
-  "packageVersion": "0.1.0",
-  "dateLocal": "2026-10-28",
-  "unity": "2022.3.62f3c1",
+  "release": "v0.2",
+  "packageVersion": "0.2.0",
+  "dateLocal": "2026-11-01",
   "platform": "Windows x64",
-  "graphicsAPI": "Direct3D12",
+  "graphicsAPI": "Direct3D11",
+  "testEnvironmentNotes": [
+    "Fresh isolated compilation exposed a missing built-in VR module. The package dependency and validation manifests were corrected, then export and all four test runs passed.",
+    "Initial resource import completed and loaded the runtime assembly, but its Unity process stalled during native shutdown for over two minutes and was terminated. Subsequent test and smoke processes exited normally; clean shutdown of that import invocation is not claimed.",
+    "One prematurely launched test process found the previous validation project still locked and ran no tests. It was retried after cleanup; only completed nonzero all-passed XML reports are counted.",
+    "The missing-detail continuity test intentionally emits a LogAssert-expected error. URP dependency fallback warnings are not Gaussian Shader compilation errors."
+  ],
   "upmEditorTests": {
-    "total": 38,
-    "passed": 38,
+    "result": "Passed",
+    "total": 70,
+    "passed": 70,
     "failed": 0,
-    "skipped": 0
+    "skipped": 0,
+    "inconclusive": 0,
+    "durationSeconds": 60.5194863,
+    "source": "upm-editmode-tests.xml",
+    "assemblies": [
+      "GaussianSplatLOD.Diagnostics.Tests.dll",
+      "GaussianSplatLOD.EditorTests.dll"
+    ]
+  },
+  "upmPlayModeTests": {
+    "result": "Passed",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "durationSeconds": 0.0437743,
+    "source": "upm-playmode-tests.xml",
+    "assemblies": [
+      "GaussianSplatLOD.RuntimeTests.dll"
+    ]
   },
   "importedResourcePackageEditorTests": {
     "result": "Passed",
-    "total": 38,
-    "passed": 38,
+    "total": 70,
+    "passed": 70,
     "failed": 0,
-    "skipped": 0
+    "skipped": 0,
+    "inconclusive": 0,
+    "durationSeconds": 17.8534248,
+    "source": "import-tests.xml",
+    "assemblies": [
+      "GaussianSplatLOD.Diagnostics.Tests.dll",
+      "GaussianSplatLOD.EditorTests.dll"
+    ]
   },
   "importedResourcePackagePlayModeTests": {
     "result": "Passed",
-    "total": 1,
-    "passed": 1,
+    "total": 2,
+    "passed": 2,
     "failed": 0,
-    "skipped": 0
+    "skipped": 0,
+    "inconclusive": 0,
+    "durationSeconds": 0.0438073,
+    "source": "import-playmode-tests.xml",
+    "assemblies": [
+      "GaussianSplatLOD.RuntimeTests.dll"
+    ]
   },
   "export": {
     "status": "passed",
+    "tag": "v0.2",
+    "packageVersion": "0.2.0",
     "unity": "2022.3.62f3c1",
     "nativeExtracted": true,
     "shadersSupported": true,
@@ -34,6 +75,8 @@
   },
   "import": {
     "status": "passed",
+    "tag": "v0.2",
+    "packageVersion": "0.2.0",
     "resourcePackageImported": true,
     "runtimeAssemblyLoaded": true
   },
@@ -44,16 +87,20 @@
     "coloredPixels": 2952,
     "unloadedResources": true
   },
-  "resourcePackageAssetPaths": 95,
+  "resourcePackageAssetPaths": 139,
   "nativeSHA256": "5f8450254e3d3c9700c414db2d3328999d421dc47b64b639b7fbf5aa8b733cee",
   "dependencies": "URP 14.0.12, Newtonsoft JSON 3.2.1, Unity Test Framework 1.1.33; isolated projects used local cached packages.",
+  "scope": "Fresh resource package import and UPM package tests use a synthetic demo; development-host SUIT performance measurements are separate.",
   "notVerified": [
-    "PICO 4 Ultra Android/Vulkan/XR",
+    "APK build",
+    "PICO 4 Ultra Android/Vulkan/XR and 90 Hz",
     "iPhone 14 iOS/Metal/IL2CPP"
   ],
   "excludedFromPublication": [
     "User campus PLY/cache datasets and screenshots",
     "Host project and other rendering plugins",
-    "Independent camera destination UI"
-  ]
+    "Host DemoPICO scene and independent camera destination UI"
+  ],
+  "resourcePackageReportNote": "The resource package was exported before final release reports and checksums were generated; those reports are included in the repository, UPM archive and release attachments.",
+  "unity": "2022.3.62f3c1"
 }

@@ -1,0 +1,42 @@
+{
+  "developmentProjectEditorTests": {
+    "total": 78,
+    "passed": 78,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 16.0408541,
+    "resultState": "Passed"
+  },
+  "developmentProjectPlayModeTests": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 0.0683626,
+    "resultState": "Passed"
+  },
+  "scope": "Development project counts include host-only navigation and PICO manifest tests. Fresh standalone release/import counts are reported separately in release-validation.json; do not infer the same test count for the distributed package.",
+  "fullRecordReadEqualityChecks": 27,
+  "testedRecordStrideBytes": 256,
+  "qualityComparison": {
+    "status": "passed",
+    "fixture": "chunk_42.ply",
+    "count": 383095,
+    "shDegree": 3,
+    "lod": 0,
+    "width": 1920,
+    "height": 1080,
+    "distanceMeters": 80,
+    "api": "Direct3D11",
+    "differences": {
+      "differingPixels": 2048,
+      "totalPixels": 2073600,
+      "nonBackgroundPixels": 2073599,
+      "meanAbsoluteChannelDifference255": 0.0003367332175925926,
+      "maximumChannelDifference255": 5,
+      "rootMeanSquaredChannelDifference255": 0.022537370371709407,
+      "pixelExact": false
+    },
+    "notes": "Actual single complete 383095-record LOD0 SH3 chunk, identical source/model/camera/render scale/opacity. No decimation, dynamic LOD, prediction, performance adaptation or SH reduction. Original frozen renderer facade versus current renderer, separate URP14 features. This is a Windows monocular screenshot comparison, not PICO stereo/FPS or full-model visual validation."
+  }
+}

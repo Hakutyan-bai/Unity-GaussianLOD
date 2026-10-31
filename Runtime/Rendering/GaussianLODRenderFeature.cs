@@ -12,7 +12,7 @@ namespace GaussianSplatLOD
             {
                 Camera camera=data.cameraData.camera;
                 var cmd=CommandBufferPool.Get("Gaussian Splat LOD");
-                try {foreach(var model in GaussianLODRenderer.Instances)if(model!=null)model.Record(camera,cmd);context.ExecuteCommandBuffer(cmd);}
+                try {var views=GaussianViewContext.FromURP(ref data.cameraData);foreach(var model in GaussianLODRenderer.Instances)if(model!=null)model.Record(camera,cmd,views);context.ExecuteCommandBuffer(cmd);}
                 finally {CommandBufferPool.Release(cmd);}
             }
         }

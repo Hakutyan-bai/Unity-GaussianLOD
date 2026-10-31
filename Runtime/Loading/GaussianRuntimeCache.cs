@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GaussianSplatLOD
 {
@@ -95,6 +96,35 @@ namespace GaussianSplatLOD
                 else File.Move(temporary, destination);
             }
             finally { if (File.Exists(temporary)) File.Delete(temporary); }
+        }
+
+        internal static async Task<GaussianSplat[]> ReadRangeAsync(string path,Header h,long offset,int count,
+            GaussianReadPipeline pipeline,CancellationToken cancellation)
+        {
+            if(offset<0||count<0||offset>h.Count-count)throw new InvalidDataException("Runtime cache record range out of bounds.");
+            cancellation.ThrowIfCancellationRequested();var output=new GaussianSplat[count];if(count==0)return output;
+            long total=(long)count*GaussianSplat.Stride,done=0;
+            byte[] bytes=pipeline.Rent((int)Math.Min(1048576,total));
+            try
+            {
+                using var stream=new FileStream(path,FileMode.Open,FileAccess.Read,FileShare.Read,65536,FileOptions.Asynchronous|FileOptions.SequentialScan);
+                stream.Position=checked(HeaderSize+offset*GaussianSplat.Stride);
+                while(done<total)
+                {
+                    int size=(int)Math.Min(bytes.Length,total-done);long destinationOffset=done;
+                    await pipeline.ReadExactlyAsync(stream,bytes,size,cancellation).ConfigureAwait(false);
+                    await pipeline.DecodeAsync(()=>CopyDecodedBytes(bytes,output,destinationOffset,size,cancellation),cancellation).ConfigureAwait(false);
+                    done+=size;
+                }
+            }
+            finally{pipeline.Return(bytes);}
+            return output;
+        }
+        static unsafe void CopyDecodedBytes(byte[] source,GaussianSplat[] destination,long byteOffset,int count,CancellationToken cancellation)
+        {
+            cancellation.ThrowIfCancellationRequested();
+            fixed(byte* input=source)fixed(GaussianSplat* output=destination)
+                Buffer.MemoryCopy(input,(byte*)output+byteOffset,(long)destination.Length*GaussianSplat.Stride-byteOffset,count);
         }
     }
 }

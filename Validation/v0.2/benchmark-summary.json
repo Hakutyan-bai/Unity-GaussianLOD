@@ -1,0 +1,1023 @@
+{
+  "schemaVersion": 1,
+  "release": "v0.2",
+  "packageVersion": "0.2.0",
+  "measurementDate": "2026-10-31",
+  "dataset": {
+    "name": "SUIT-20261027",
+    "sourcePoints": 7214556,
+    "spatialNodes": 52,
+    "plyFiles": 141,
+    "lodLevels": 5,
+    "shDegree": 3,
+    "maxFinestRangePoints": 383095,
+    "plyBytes": 3080718255,
+    "losslessCacheBytes": 3341573232,
+    "gpuRecordStrideBytes": 256,
+    "metadataSHA256": "add50148df21fd497129438255c05b756fd97530b4c3bdd64c521b5ae79f250b",
+    "sourceGeometryOrScreenshotsIncluded": false
+  },
+  "shortReplay": {
+    "scope": "CPU submission and streaming evidence; not device frame rate or same-image GPU performance",
+    "settings": {
+      "unity": "2022.3.62f3c1",
+      "device": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "platform": "Windows Editor",
+      "pipeline": "URP14",
+      "api": "Direct3D12",
+      "width": 1280,
+      "height": 720,
+      "trialsPerPath": 3,
+      "secondsPerTrial": 30,
+      "maxVisibleSplats": 1000000,
+      "cpuCacheMiB": 384,
+      "gpuBudgetMiB": 640,
+      "maxUploadSplatsPerFrame": 16384
+    },
+    "caveats": [
+      "Editor update cadence changes from approximately 13ms to 100ms across the controlled baseline. Do not derive an FPS or first-screen speedup ratio.",
+      "The operating-system page cache was not flushed. These are not cold-storage measurements.",
+      "The route and hard budgets are shared, but scheduling may select different LOD cuts. Visible counts and fixed-view quality must be assessed separately.",
+      "GPU timing -1 is unavailable. Render submission Stopwatch time is CPU time, not GPU time.",
+      "CPU bytes count decoded data plus in-flight reservations, not total process memory; Unity allocated bytes are not Android PSS.",
+      "DiskReads counts started range requests and can include cancellation; PLYReads/CacheReads count completed reads. Prediction can increase requests.",
+      "Short-test status passed checks coverage/refinement, not 20-minute stability or PICO readiness."
+    ],
+    "results": [
+      {
+        "run": "baseline-original-ply",
+        "status": "passed",
+        "api": "Direct3D12",
+        "device": "NVIDIA GeForce RTX 4050 Laptop GPU",
+        "coverageSeconds": [
+          0.7954383000001144,
+          0.9031082000001334,
+          0.824030399999856
+        ],
+        "coverageMedianSeconds": 0.824030399999856,
+        "minimumCoveredNodes": 52,
+        "editorIterationMs": {
+          "median": 100.3611500000261,
+          "p95": 112.93479999994815,
+          "max": 811.3053000001855
+        },
+        "tickMs": {
+          "median": 0.25165000000000004,
+          "p95": 1.2468000000000001,
+          "max": 5.2432
+        },
+        "uploadSubmitMs": null,
+        "renderSubmitMs": {
+          "median": 3.25565,
+          "p95": 12.0357,
+          "max": 269.4417
+        },
+        "gpuFrameMs": null,
+        "visibleSplats": {
+          "median": 652693.0,
+          "p95": 830095.0,
+          "max": 996924.0
+        },
+        "reads": [
+          44,
+          44,
+          44
+        ],
+        "completedPLYReads": [
+          44,
+          44,
+          44
+        ],
+        "completedCacheReads": [
+          0,
+          0,
+          0
+        ],
+        "peakCPUBytes": 402333184,
+        "allocatedGPUBytes": 553277792,
+        "editorFocusedFraction": null
+      },
+      {
+        "run": "baseline-controlled-ply",
+        "status": "passed",
+        "api": "Direct3D12",
+        "device": "NVIDIA GeForce RTX 4050 Laptop GPU",
+        "coverageSeconds": [
+          0.3306847999997444,
+          0.2644684000001689,
+          0.8002590999999484
+        ],
+        "coverageMedianSeconds": 0.3306847999997444,
+        "minimumCoveredNodes": 52,
+        "editorIterationMs": {
+          "median": 12.101899999834131,
+          "p95": 100.23560000036014,
+          "max": 293.1928000002699
+        },
+        "tickMs": {
+          "median": 0.0187,
+          "p95": 0.45880000000000004,
+          "max": 69.1233
+        },
+        "uploadSubmitMs": null,
+        "renderSubmitMs": {
+          "median": 1.20865,
+          "p95": 5.5195,
+          "max": 93.559
+        },
+        "gpuFrameMs": {
+          "median": 0.246784,
+          "p95": 8.943616,
+          "max": 16.484864
+        },
+        "visibleSplats": {
+          "median": 649737.0,
+          "p95": 759973.0,
+          "max": 996236.0
+        },
+        "reads": [
+          43,
+          39,
+          44
+        ],
+        "completedPLYReads": [
+          43,
+          39,
+          44
+        ],
+        "completedCacheReads": [
+          0,
+          0,
+          0
+        ],
+        "peakCPUBytes": 402333184,
+        "allocatedGPUBytes": 553277792,
+        "editorFocusedFraction": 0.8500554323725056
+      },
+      {
+        "run": "optimized-ply",
+        "status": "passed",
+        "api": "Direct3D12",
+        "device": "NVIDIA GeForce RTX 4050 Laptop GPU",
+        "coverageSeconds": [
+          0.8559591000002911,
+          0.7780565999996725,
+          0.8004622999997082
+        ],
+        "coverageMedianSeconds": 0.8004622999997082,
+        "minimumCoveredNodes": 52,
+        "editorIterationMs": {
+          "median": 99.97960000009698,
+          "p95": 101.31559999990714,
+          "max": 810.5400999997983
+        },
+        "tickMs": {
+          "median": 0.4617,
+          "p95": 1.2934,
+          "max": 2.0536000000000003
+        },
+        "uploadSubmitMs": {
+          "median": 0.0,
+          "p95": 0.8432999999999999,
+          "max": 1.6359000000000001
+        },
+        "renderSubmitMs": {
+          "median": 1.2149,
+          "p95": 2.5522,
+          "max": 152.4647
+        },
+        "gpuFrameMs": null,
+        "visibleSplats": {
+          "median": 525139.0,
+          "p95": 842223.0,
+          "max": 997164.0
+        },
+        "reads": [
+          56,
+          55,
+          56
+        ],
+        "completedPLYReads": [
+          48,
+          51,
+          48
+        ],
+        "completedCacheReads": [
+          0,
+          0,
+          0
+        ],
+        "peakCPUBytes": 402416896,
+        "allocatedGPUBytes": 544504288,
+        "editorFocusedFraction": 0.0
+      },
+      {
+        "run": "optimized-cache",
+        "status": "passed",
+        "api": "Direct3D12",
+        "device": "NVIDIA GeForce RTX 4050 Laptop GPU",
+        "coverageSeconds": [
+          0.7683154999999715,
+          0.8018070000002808,
+          0.8044214999999895
+        ],
+        "coverageMedianSeconds": 0.8018070000002808,
+        "minimumCoveredNodes": 52,
+        "editorIterationMs": {
+          "median": 99.96240000009493,
+          "p95": 101.25509999988935,
+          "max": 176.10459999968953
+        },
+        "tickMs": {
+          "median": 0.6713,
+          "p95": 1.374,
+          "max": 73.9728
+        },
+        "uploadSubmitMs": {
+          "median": 0.44920000000000004,
+          "p95": 0.8543000000000001,
+          "max": 1.3617000000000001
+        },
+        "renderSubmitMs": {
+          "median": 1.1615,
+          "p95": 2.5639000000000003,
+          "max": 122.3751
+        },
+        "gpuFrameMs": null,
+        "visibleSplats": {
+          "median": 494234.0,
+          "p95": 784906.0,
+          "max": 937715.0
+        },
+        "reads": [
+          107,
+          82,
+          87
+        ],
+        "completedPLYReads": [
+          0,
+          0,
+          0
+        ],
+        "completedCacheReads": [
+          103,
+          79,
+          82
+        ],
+        "peakCPUBytes": 402570240,
+        "allocatedGPUBytes": 544504288,
+        "editorFocusedFraction": 0.0
+      }
+    ]
+  },
+  "warmReadMicrobenchmark": {
+    "scope": "File/CPU warm-page-cache microbenchmark; not rendering, upload, startup or device FPS.",
+    "unity": "2022.3.62f3c1",
+    "repeats": 3,
+    "conditions": "CPU/file microbenchmark only; warm OS file cache, no cache flush. One excluded warmup per algorithm/range includes first cache SHA verification. Headers/metadata are reused. Algorithm order rotates per repeat. Explicit GC before each timed read is excluded. Original decoder is frozen pre-optimization source. Async stage times exclude queue/header/verification/setup and need not sum to elapsed. No rendering, GPU upload, FPS, Android installation or PICO measurement. Equality checks every byte of every decoded 256-byte record after timing, including SH3 and covariance.",
+    "selectedRanges": [
+      {
+        "file": 0,
+        "filename": "chunk_0.ply",
+        "offset": 26834,
+        "count": 3830,
+        "lod": 4
+      },
+      {
+        "file": 21,
+        "filename": "chunk_21.ply",
+        "offset": 0,
+        "count": 148241,
+        "lod": 0
+      },
+      {
+        "file": 42,
+        "filename": "chunk_42.ply",
+        "offset": 0,
+        "count": 383095,
+        "lod": 0
+      }
+    ],
+    "measurements": [
+      {
+        "range": 1,
+        "repeat": 1,
+        "file": 0,
+        "lod": 4,
+        "count": 3830,
+        "offset": 26834,
+        "sourceBytes": 903880,
+        "decodedBytes": 980480,
+        "ioBytes": 903880,
+        "filename": "chunk_0.ply",
+        "algorithm": "original-sync-ply",
+        "elapsedMs": 8.024700000000001,
+        "ioMs": -1.0,
+        "decodeMs": -1.0,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 1,
+        "repeat": 1,
+        "file": 0,
+        "lod": 4,
+        "count": 3830,
+        "offset": 26834,
+        "sourceBytes": 903880,
+        "decodedBytes": 980480,
+        "ioBytes": 903880,
+        "filename": "chunk_0.ply",
+        "algorithm": "optimized-async-ply",
+        "elapsedMs": 8.111500000000001,
+        "ioMs": 0.15499999999999997,
+        "decodeMs": 7.5472,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 1,
+        "repeat": 1,
+        "file": 0,
+        "lod": 4,
+        "count": 3830,
+        "offset": 26834,
+        "sourceBytes": 903880,
+        "decodedBytes": 980480,
+        "ioBytes": 980480,
+        "filename": "chunk_0.ply",
+        "algorithm": "optimized-async-gsbin",
+        "elapsedMs": 0.5700000000000001,
+        "ioMs": 0.22609999999999997,
+        "decodeMs": 0.0503,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 1,
+        "repeat": 2,
+        "file": 0,
+        "lod": 4,
+        "count": 3830,
+        "offset": 26834,
+        "sourceBytes": 903880,
+        "decodedBytes": 980480,
+        "ioBytes": 903880,
+        "filename": "chunk_0.ply",
+        "algorithm": "optimized-async-ply",
+        "elapsedMs": 8.337200000000001,
+        "ioMs": 0.2031,
+        "decodeMs": 7.7052,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 1,
+        "repeat": 2,
+        "file": 0,
+        "lod": 4,
+        "count": 3830,
+        "offset": 26834,
+        "sourceBytes": 903880,
+        "decodedBytes": 980480,
+        "ioBytes": 980480,
+        "filename": "chunk_0.ply",
+        "algorithm": "optimized-async-gsbin",
+        "elapsedMs": 0.625,
+        "ioMs": 0.18169999999999997,
+        "decodeMs": 0.0493,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 1,
+        "repeat": 2,
+        "file": 0,
+        "lod": 4,
+        "count": 3830,
+        "offset": 26834,
+        "sourceBytes": 903880,
+        "decodedBytes": 980480,
+        "ioBytes": 903880,
+        "filename": "chunk_0.ply",
+        "algorithm": "original-sync-ply",
+        "elapsedMs": 7.8284,
+        "ioMs": -1.0,
+        "decodeMs": -1.0,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 1,
+        "repeat": 3,
+        "file": 0,
+        "lod": 4,
+        "count": 3830,
+        "offset": 26834,
+        "sourceBytes": 903880,
+        "decodedBytes": 980480,
+        "ioBytes": 980480,
+        "filename": "chunk_0.ply",
+        "algorithm": "optimized-async-gsbin",
+        "elapsedMs": 0.5157,
+        "ioMs": 0.15880000000000005,
+        "decodeMs": 0.0421,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 1,
+        "repeat": 3,
+        "file": 0,
+        "lod": 4,
+        "count": 3830,
+        "offset": 26834,
+        "sourceBytes": 903880,
+        "decodedBytes": 980480,
+        "ioBytes": 903880,
+        "filename": "chunk_0.ply",
+        "algorithm": "original-sync-ply",
+        "elapsedMs": 7.807300000000001,
+        "ioMs": -1.0,
+        "decodeMs": -1.0,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 1,
+        "repeat": 3,
+        "file": 0,
+        "lod": 4,
+        "count": 3830,
+        "offset": 26834,
+        "sourceBytes": 903880,
+        "decodedBytes": 980480,
+        "ioBytes": 903880,
+        "filename": "chunk_0.ply",
+        "algorithm": "optimized-async-ply",
+        "elapsedMs": 8.1151,
+        "ioMs": 0.25140000000000007,
+        "decodeMs": 7.553799999999999,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 2,
+        "repeat": 1,
+        "file": 21,
+        "lod": 0,
+        "count": 148241,
+        "offset": 0,
+        "sourceBytes": 34984876,
+        "decodedBytes": 37949696,
+        "ioBytes": 34984876,
+        "filename": "chunk_21.ply",
+        "algorithm": "original-sync-ply",
+        "elapsedMs": 296.9787,
+        "ioMs": -1.0,
+        "decodeMs": -1.0,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 2,
+        "repeat": 1,
+        "file": 21,
+        "lod": 0,
+        "count": 148241,
+        "offset": 0,
+        "sourceBytes": 34984876,
+        "decodedBytes": 37949696,
+        "ioBytes": 34984876,
+        "filename": "chunk_21.ply",
+        "algorithm": "optimized-async-ply",
+        "elapsedMs": 298.33410000000003,
+        "ioMs": 6.0168,
+        "decodeMs": 283.94820000000004,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 2,
+        "repeat": 1,
+        "file": 21,
+        "lod": 0,
+        "count": 148241,
+        "offset": 0,
+        "sourceBytes": 34984876,
+        "decodedBytes": 37949696,
+        "ioBytes": 37949696,
+        "filename": "chunk_21.ply",
+        "algorithm": "optimized-async-gsbin",
+        "elapsedMs": 12.8064,
+        "ioMs": 6.4422,
+        "decodeMs": 2.3770000000000002,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 2,
+        "repeat": 2,
+        "file": 21,
+        "lod": 0,
+        "count": 148241,
+        "offset": 0,
+        "sourceBytes": 34984876,
+        "decodedBytes": 37949696,
+        "ioBytes": 34984876,
+        "filename": "chunk_21.ply",
+        "algorithm": "optimized-async-ply",
+        "elapsedMs": 296.9997,
+        "ioMs": 6.3088,
+        "decodeMs": 286.2224,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 2,
+        "repeat": 2,
+        "file": 21,
+        "lod": 0,
+        "count": 148241,
+        "offset": 0,
+        "sourceBytes": 34984876,
+        "decodedBytes": 37949696,
+        "ioBytes": 37949696,
+        "filename": "chunk_21.ply",
+        "algorithm": "optimized-async-gsbin",
+        "elapsedMs": 12.7392,
+        "ioMs": 6.320300000000001,
+        "decodeMs": 2.3415,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 2,
+        "repeat": 2,
+        "file": 21,
+        "lod": 0,
+        "count": 148241,
+        "offset": 0,
+        "sourceBytes": 34984876,
+        "decodedBytes": 37949696,
+        "ioBytes": 34984876,
+        "filename": "chunk_21.ply",
+        "algorithm": "original-sync-ply",
+        "elapsedMs": 295.08910000000003,
+        "ioMs": -1.0,
+        "decodeMs": -1.0,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 2,
+        "repeat": 3,
+        "file": 21,
+        "lod": 0,
+        "count": 148241,
+        "offset": 0,
+        "sourceBytes": 34984876,
+        "decodedBytes": 37949696,
+        "ioBytes": 37949696,
+        "filename": "chunk_21.ply",
+        "algorithm": "optimized-async-gsbin",
+        "elapsedMs": 12.499600000000001,
+        "ioMs": 6.430899999999998,
+        "decodeMs": 2.3667999999999996,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 2,
+        "repeat": 3,
+        "file": 21,
+        "lod": 0,
+        "count": 148241,
+        "offset": 0,
+        "sourceBytes": 34984876,
+        "decodedBytes": 37949696,
+        "ioBytes": 34984876,
+        "filename": "chunk_21.ply",
+        "algorithm": "original-sync-ply",
+        "elapsedMs": 294.8361,
+        "ioMs": -1.0,
+        "decodeMs": -1.0,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 2,
+        "repeat": 3,
+        "file": 21,
+        "lod": 0,
+        "count": 148241,
+        "offset": 0,
+        "sourceBytes": 34984876,
+        "decodedBytes": 37949696,
+        "ioBytes": 34984876,
+        "filename": "chunk_21.ply",
+        "algorithm": "optimized-async-ply",
+        "elapsedMs": 293.28200000000004,
+        "ioMs": 6.1007,
+        "decodeMs": 283.2101999999999,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 3,
+        "repeat": 1,
+        "file": 42,
+        "lod": 0,
+        "count": 383095,
+        "offset": 0,
+        "sourceBytes": 90410420,
+        "decodedBytes": 98072320,
+        "ioBytes": 90410420,
+        "filename": "chunk_42.ply",
+        "algorithm": "original-sync-ply",
+        "elapsedMs": 754.5455000000001,
+        "ioMs": -1.0,
+        "decodeMs": -1.0,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 3,
+        "repeat": 1,
+        "file": 42,
+        "lod": 0,
+        "count": 383095,
+        "offset": 0,
+        "sourceBytes": 90410420,
+        "decodedBytes": 98072320,
+        "ioBytes": 90410420,
+        "filename": "chunk_42.ply",
+        "algorithm": "optimized-async-ply",
+        "elapsedMs": 764.6181,
+        "ioMs": 15.294000000000004,
+        "decodeMs": 728.5175999999999,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 3,
+        "repeat": 1,
+        "file": 42,
+        "lod": 0,
+        "count": 383095,
+        "offset": 0,
+        "sourceBytes": 90410420,
+        "decodedBytes": 98072320,
+        "ioBytes": 98072320,
+        "filename": "chunk_42.ply",
+        "algorithm": "optimized-async-gsbin",
+        "elapsedMs": 31.024600000000003,
+        "ioMs": 15.796700000000001,
+        "decodeMs": 6.206100000000001,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 3,
+        "repeat": 2,
+        "file": 42,
+        "lod": 0,
+        "count": 383095,
+        "offset": 0,
+        "sourceBytes": 90410420,
+        "decodedBytes": 98072320,
+        "ioBytes": 90410420,
+        "filename": "chunk_42.ply",
+        "algorithm": "optimized-async-ply",
+        "elapsedMs": 751.8478,
+        "ioMs": 16.023899999999998,
+        "decodeMs": 725.9234999999999,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 3,
+        "repeat": 2,
+        "file": 42,
+        "lod": 0,
+        "count": 383095,
+        "offset": 0,
+        "sourceBytes": 90410420,
+        "decodedBytes": 98072320,
+        "ioBytes": 98072320,
+        "filename": "chunk_42.ply",
+        "algorithm": "optimized-async-gsbin",
+        "elapsedMs": 30.393800000000002,
+        "ioMs": 15.726099999999995,
+        "decodeMs": 5.988999999999997,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 3,
+        "repeat": 2,
+        "file": 42,
+        "lod": 0,
+        "count": 383095,
+        "offset": 0,
+        "sourceBytes": 90410420,
+        "decodedBytes": 98072320,
+        "ioBytes": 90410420,
+        "filename": "chunk_42.ply",
+        "algorithm": "original-sync-ply",
+        "elapsedMs": 763.104,
+        "ioMs": -1.0,
+        "decodeMs": -1.0,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 3,
+        "repeat": 3,
+        "file": 42,
+        "lod": 0,
+        "count": 383095,
+        "offset": 0,
+        "sourceBytes": 90410420,
+        "decodedBytes": 98072320,
+        "ioBytes": 98072320,
+        "filename": "chunk_42.ply",
+        "algorithm": "optimized-async-gsbin",
+        "elapsedMs": 31.376900000000003,
+        "ioMs": 16.016000000000005,
+        "decodeMs": 6.040200000000002,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 3,
+        "repeat": 3,
+        "file": 42,
+        "lod": 0,
+        "count": 383095,
+        "offset": 0,
+        "sourceBytes": 90410420,
+        "decodedBytes": 98072320,
+        "ioBytes": 90410420,
+        "filename": "chunk_42.ply",
+        "algorithm": "original-sync-ply",
+        "elapsedMs": 764.3787,
+        "ioMs": -1.0,
+        "decodeMs": -1.0,
+        "exact256ByteMatch": true
+      },
+      {
+        "range": 3,
+        "repeat": 3,
+        "file": 42,
+        "lod": 0,
+        "count": 383095,
+        "offset": 0,
+        "sourceBytes": 90410420,
+        "decodedBytes": 98072320,
+        "ioBytes": 90410420,
+        "filename": "chunk_42.ply",
+        "algorithm": "optimized-async-ply",
+        "elapsedMs": 758.4849,
+        "ioMs": 15.861699999999999,
+        "decodeMs": 733.2665999999999,
+        "exact256ByteMatch": true
+      }
+    ],
+    "medians": [
+      {
+        "filename": "chunk_0.ply",
+        "offset": 26834,
+        "count": 3830,
+        "lod": 4,
+        "original-sync-plyMedianMs": 7.8284,
+        "optimized-async-plyMedianMs": 8.1151,
+        "optimized-async-gsbinMedianMs": 0.5700000000000001,
+        "cacheVersusOriginalPLYRatio": 13.734035087719297
+      },
+      {
+        "filename": "chunk_21.ply",
+        "offset": 0,
+        "count": 148241,
+        "lod": 0,
+        "original-sync-plyMedianMs": 295.08910000000003,
+        "optimized-async-plyMedianMs": 296.9997,
+        "optimized-async-gsbinMedianMs": 12.7392,
+        "cacheVersusOriginalPLYRatio": 23.163864292891237
+      },
+      {
+        "filename": "chunk_42.ply",
+        "offset": 0,
+        "count": 383095,
+        "lod": 0,
+        "original-sync-plyMedianMs": 763.104,
+        "optimized-async-plyMedianMs": 758.4849,
+        "optimized-async-gsbinMedianMs": 31.024600000000003,
+        "cacheVersusOriginalPLYRatio": 24.596739361667836
+      }
+    ],
+    "versionCaveat": ".gsbin already existed in v0.1. These compare PLY and cache paths, not v0.1-cache versus v0.2-cache throughput."
+  },
+  "normalPlayModeSoak": {
+    "status": "passed",
+    "platform": "Windows Editor / normal Play Mode / desktop mono",
+    "api": "Direct3D12",
+    "unity": "2022.3.62f3c1",
+    "controller": {
+      "status": "passed",
+      "seconds": 1200.6888837,
+      "firstCoverageSeconds": 1.0003229000000147,
+      "minCoveredNodes": 52,
+      "sourcePoints": 7214556,
+      "visibleSplats": 848949,
+      "cpuBytes": 398274048,
+      "gpuBytes": 544504288,
+      "diskReads": 2155,
+      "cacheReads": 2142,
+      "error": null,
+      "api": "Direct3D12",
+      "unity": "2022.3.62f3c1",
+      "notes": "Normal DemoPICO Play Mode application frames, desktop mono, no XR initialization or APK. 1200-second timestamp route. No MCP diagnostics during measurement. Domain reload temporarily disabled only to retain this controller; original Editor options restored on exit. Device FPS and stereo are unverified."
+    },
+    "datasetSHA256": "add50148df21fd497129438255c05b756fd97530b4c3bdd64c521b5ae79f250b",
+    "sampleCount": 11708,
+    "lastSampleSeconds": 1199.9152,
+    "firstLoggedCoverageSeconds": 0.2776,
+    "coverageLossSamplesAfterFirstCoverage": 0,
+    "sampleSpacingSeconds": {
+      "median": 0.10180000000002565,
+      "p95": 0.10629999999991924,
+      "max": 0.22500000000002274
+    },
+    "steadySampledCPUFrameMs": {
+      "median": 2.8422,
+      "p95": 4.1364,
+      "max": 74.3985
+    },
+    "steadySampledGPUFrameMs": {
+      "median": 2.8549,
+      "p95": 3.8246,
+      "max": 12.5911
+    },
+    "steadySampledUploadSubmitMs": {
+      "median": 0.0,
+      "p95": 0.0,
+      "max": 3.4091
+    },
+    "maxCPUDecodedReservedBytes": 402185216,
+    "maxGPUBufferEstimateBytes": 544504288,
+    "maxUnityAllocatedBytes": 265425315,
+    "maxProcessPrivateBytes": 5394616320,
+    "privateMedianFirstMinuteBytes": 4533960704,
+    "privateMedianFiveToSixMinutesBytes": 5197674496.0,
+    "privateMedianLastMinuteBytes": 5393928192.0,
+    "finalMeanLoadMs": 57.3188,
+    "finalP95LoadMs": 222.315,
+    "finalCacheHit": 0.8086,
+    "finalPreloadHit": 1.0,
+    "finalDiskReads": 2154,
+    "notes": "Timestamp route in the actual application player loop; XR initialization disabled. CSV takes 10Hz snapshots, not every frame; reported maxima/P95 can miss spikes. FrameTimingManager values are application-frame samples, not per-pass GPU measurements. Unavailable values are -1 and excluded. OS page cache was not flushed. External process memory is sampled every10s. No PICO/Android/device90Hz or leak-free claim. Unity total allocation, plugin cache budgets, driver memory and process private bytes are different measures.",
+    "maxProcessWorkingSetBytes": 3593895936,
+    "privateMedianFirstToLastGrowthBytes": 859967488.0,
+    "privateMedianWarmToLastGrowthBytes": 196253696.0,
+    "scopeCaveat": "Normal Play Mode desktop mono, not PICO. Post-run Game View reading was1470x728; resolution was not locked to the short replay. Memory growth remains unresolved."
+  },
+  "correctness": {
+    "developmentProjectEditorTests": {
+      "total": 78,
+      "passed": 78,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 16.0408541,
+      "resultState": "Passed"
+    },
+    "developmentProjectPlayModeTests": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 0.0683626,
+      "resultState": "Passed"
+    },
+    "scope": "Development project counts include host-only navigation and PICO manifest tests. Fresh standalone release/import counts are reported separately in release-validation.json; do not infer the same test count for the distributed package.",
+    "fullRecordReadEqualityChecks": 27,
+    "testedRecordStrideBytes": 256,
+    "qualityComparison": {
+      "status": "passed",
+      "fixture": "chunk_42.ply",
+      "count": 383095,
+      "shDegree": 3,
+      "lod": 0,
+      "width": 1920,
+      "height": 1080,
+      "distanceMeters": 80,
+      "api": "Direct3D11",
+      "differences": {
+        "differingPixels": 2048,
+        "totalPixels": 2073600,
+        "nonBackgroundPixels": 2073599,
+        "meanAbsoluteChannelDifference255": 0.0003367332175925926,
+        "maximumChannelDifference255": 5,
+        "rootMeanSquaredChannelDifference255": 0.022537370371709407,
+        "pixelExact": false
+      },
+      "notes": "Actual single complete 383095-record LOD0 SH3 chunk, identical source/model/camera/render scale/opacity. No decimation, dynamic LOD, prediction, performance adaptation or SH reduction. Original frozen renderer facade versus current renderer, separate URP14 features. This is a Windows monocular screenshot comparison, not PICO stereo/FPS or full-model visual validation."
+    }
+  },
+  "priorOffscreenSoaks": [
+    {
+      "file": "soak-cache-dx11.json",
+      "status": "passed",
+      "api": "Direct3D11",
+      "trialSeconds": 1200.0,
+      "trials": [
+        {
+          "trial": 1,
+          "firstCoverageSeconds": 0.2704085999999961,
+          "renderedFrames": 88196,
+          "minCoveredNodes": 52,
+          "frameCount": 88216,
+          "meanEditorIterationMs": 13.606698951323649,
+          "p95EditorIterationMs": 14.912199999798759,
+          "maxCPUBytes": 402638592,
+          "maxGPUBytes": 544504288,
+          "maxProcessPrivateBytes": 6281940992,
+          "maxGraphicsDriverBytes": 1813991312,
+          "diskReads": 2259,
+          "cacheReads": 2232,
+          "plyReads": 0
+        }
+      ],
+      "error": null,
+      "actualElapsedSeconds": 1200.0074091,
+      "sampleCount": 88216,
+      "editorIterationMs": {
+        "median": 12.712649999912173,
+        "p95": 14.911999999981163,
+        "max": 48428.512299999966
+      },
+      "tickMs": {
+        "median": 0.0679,
+        "p95": 0.5875,
+        "max": 108.6036
+      },
+      "uploadSubmitMs": {
+        "median": 0.0,
+        "p95": 0.5051,
+        "max": 1.5928
+      },
+      "renderSubmitMs": {
+        "median": 0.9218000000000001,
+        "p95": 1.5246000000000002,
+        "max": 147.16910000000001
+      },
+      "peakCPUBytes": 402638592,
+      "allocatedGPUBytes": 544504288,
+      "peakProcessPrivateBytes": 6281940992,
+      "peakGraphicsDriverBytes": 1813991312,
+      "firstMinutePrivateMedianBytes": 5492703232,
+      "lastMinutePrivateMedianBytes": 6192697344.0,
+      "privateMedianGrowthBytes": 699994112.0,
+      "largestIterationSample": {
+        "seconds": 404.2169873999999,
+        "frameMs": 48428.512299999966,
+        "tickMs": 0.11800000000000001,
+        "renderSubmitMs": 0.7767000000000001,
+        "cpuFrameMs": 4.859,
+        "gpuFrameMs": -1.0,
+        "uploadMs": 0.0,
+        "visible": 497241,
+        "covered": 52,
+        "pending": 0,
+        "resident": 9,
+        "transitions": 0,
+        "editorFocused": true,
+        "cpuBytes": 315105280,
+        "gpuBytes": 544504288,
+        "processBytes": 217700750,
+        "privateBytes": 5990678528,
+        "graphicsDriverBytes": 1813982672,
+        "reads": 714
+      },
+      "caveat": "The DX11 run completed its wall-clock route and coverage checks, but an MCP diagnostic pause caused a 48.4s Editor iteration at 404.2s. Process private memory grew about 668MiB. This is not uninterrupted roaming, flat process memory or a leak-free result; investigate native/managed allocations on device and in Player."
+    },
+    {
+      "file": "soak-cache.json",
+      "status": "failed-native-crash",
+      "api": null,
+      "trialSeconds": 1200.0,
+      "trials": 1,
+      "error": "Unity D3D12 upload scratch allocation failed (8007000e); non-local graphics memory 7675MB exceeds7292MB budget. Editor offscreen replay while unfocused; suspected UUM-86354. Not a passed20min test."
+    }
+  ],
+  "limitations": [
+    "No PICO/Android/iPhone device measurement, APK build, verified device90Hz, controller thumbstick binding or device memory stability result.",
+    "Overall first coarse coverage remains approximately0.8s in the comparable short records; no demonstrated significant first-screen or same-image FPS improvement.",
+    "CPU bytes are decoded arrays and in-flight reservations, not total process memory. GPU bytes estimate plugin buffers, not all VRAM.",
+    "Normal Play Mode process private memory grew approximately820.13MiB from first to last minute and187.16MiB from minute5-6 to last minute. No leak-free claim.",
+    "Earlier unfocused DX12 Editor offscreen soak crashed on upload scratch allocation; separate DX11 offscreen replay contained a48.4s MCP diagnostic pause. Both remain failed/qualified evidence, not erased by the later normal Play Mode result.",
+    "The host-only SUIT-bound DemoPICO scene is not included in the generic UPM/resource package; shipped synthetic demo and core XR paths do not prove headset/runtime/controller compatibility."
+  ],
+  "sourceReportDigests": {
+    "comparison": {
+      "file": "comparison.json",
+      "sha256": "697e6692d4fd6afc6ac00df2f798b642f4f4fef1c7c2d27995a28c2c9449b0fc"
+    },
+    "io": {
+      "file": "io-microbenchmark.json",
+      "sha256": "628b52592ec3bc614d2d4e1f92beb0fa86209afe271ab125650c55c7a05f5b44"
+    },
+    "runtime": {
+      "file": "runtime-soak-analysis.json",
+      "sha256": "b12884d09af66be4f6ceb8ebf50de88d9ef8e45e15ddcb189344666e15658b13"
+    },
+    "editorTests": {
+      "file": "regression-tests-78.json",
+      "sha256": "6cbeed108f309cf1697dfef7df8a3eee52ee7970483763cace68f8e798b5695a"
+    },
+    "playTests": {
+      "file": "playmode-tests-final.json",
+      "sha256": "65d719d6f765e529a0182bf8a2d4c621d12e54d4d59409f368541d4c78bc5ad5"
+    },
+    "quality": {
+      "file": "visual-fixture/comparison.json",
+      "sha256": "25c9fe25f0bd13dda6a2dc6aacb2704707124849743c83bae5410f9b2516bb24"
+    }
+  },
+  "publicationScope": "Numeric aggregates only. No campus geometry, Gaussian cache payload, screenshot, raw crash/process log, credentials or absolute machine path."
+}

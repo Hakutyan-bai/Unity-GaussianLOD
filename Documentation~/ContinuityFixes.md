@@ -17,7 +17,7 @@
 - Buffer 规划测试重现 4096 MiB / 500 万点并检查 2 GiB 和 1 GiB 单缓冲设备上限，不为单元测试分配数 GB 数据。当前真实场景同一 4096 MiB / 500 万配置实际加载成功：59 个分区已覆盖，无 Buffer 超限错误。GPU 总分配约 2.114 GiB，是 arena 与排序等多个缓冲之和，单 arena 小于 2 GiB。
 - 逐帧流式回归：受限增量上传时未完成首屏不发布零散分块；首次发布完整粗级；过渡中分区覆盖数量不下降，旧/新绘制总数不超排序容量；共同细化前沿不跨多级跳变。
 - GPU 帧缓冲测试：同一 Gaussian 的 25% + 75% 光学厚度渐变，与单个完整 Gaussian 的 alpha / 红通道差值在 0.015 内，避免线性 alpha 交叉淡化的明显变暗。
-- 真实已有数据 `G:/SUIT/edit/qiepian/JN_LOD1/lod-meta.json`，7,261,819 源点、126 PLY、59 分区。512 MiB GPU/CPU、100 万点排序预算，1280×720，近/远/非均匀负缩放三个视角验证通过。最新 Coherent LOD 记录：首次整体粗级约 **0.484 秒**，其后 **273 个采样帧最少覆盖 59 个分区**，36 帧处于渐变。报告 `preview-builtin-coherent-JN.json` 及同名阶段 PNG。该时间只表示本机本次缓存条件下的结果，不是保证值。
+- 真实已有数据 `<外部模型目录>/JN_LOD1/lod-meta.json`，7,261,819 源点、126 PLY、59 分区。512 MiB GPU/CPU、100 万点排序预算，1280×720，近/远/非均匀负缩放三个视角验证通过。最新 Coherent LOD 记录：首次整体粗级约 **0.484 秒**，其后 **273 个采样帧最少覆盖 59 个分区**，36 帧处于渐变。报告 `preview-builtin-coherent-JN.json` 及同名阶段 PNG。该时间只表示本机本次缓存条件下的结果，不是保证值。
 - 当前 Game View 真实鼠标操作：捕获后 `Cursor.lockState=Locked`、`visible=false`；按 Escape 后 `None`、`true`；pitch=170 且范围 [120,170]。记录 `fps-cursor-captured.json`、`fps-cursor-escaped.json`。
 - 修改后 C# 编译与 Unity Console 检查无错误。
 

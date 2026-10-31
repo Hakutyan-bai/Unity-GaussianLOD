@@ -1,19 +1,34 @@
 #pragma kernel Initialize
 #pragma kernel Histogram
-#pragma kernel Prefix
+#pragma kernel PrefixBlocks
+#pragma kernel PrefixBlockSums
 #pragma kernel Scatter
+#pragma kernel BuildVisible
 #include "GaussianLODCommon.hlsl"
 StructuredBuffer<GaussianRecord> _Splats;
 StructuredBuffer<uint2> _Visible;
 StructuredBuffer<uint2> _Source;
 RWStructuredBuffer<uint2> _Destination;
-RWStructuredBuffer<uint> _Histogram, _Offsets, _Totals;
+RWStructuredBuffer<uint> _Histogram, _Offsets, _Totals, _BlockSums, _BlockOffsets;
+StructuredBuffer<uint4> _Segments;
+RWStructuredBuffer<uint2> _VisibleOutput;
 float4x4 _View;
-uint _Count, _Groups, _Shift;
+uint _Count, _Groups, _Shift, _Blocks, _SegmentCount;
 groupshared uint counts[16];
 groupshared uint masks[128];
+groupshared uint scan[256];
 
-// Stable radix-16, portable SM5, no subgroup/wave intrinsics. Negative view Z sorts far to near.
+// Keep the public Visible uint2 ABI; expand node-sized descriptors on the GPU.
+[numthreads(256,1,1)]
+void BuildVisible(uint id:SV_DispatchThreadID)
+{
+    if(id>=_Count)return;
+    uint low=0, high=_SegmentCount;
+    while(low+1<high){uint mid=(low+high)>>1;if(_Segments[mid].w<=id)low=mid;else high=mid;}
+    uint4 segment=_Segments[low];
+    _VisibleOutput[id]=uint2(segment.x+id-segment.w,segment.z);
+}
+// Stable radix-16. Negative view Z sorts far to near. No wave/subgroup intrinsics.
 [numthreads(256,1,1)]
 void Initialize(uint id:SV_DispatchThreadID)
 {
@@ -32,12 +47,35 @@ void Histogram(uint id:SV_DispatchThreadID,uint lane:SV_GroupIndex,uint3 gid:SV_
     GroupMemoryBarrierWithGroupSync();
     if(lane<16)_Histogram[gid.x*16+lane]=counts[lane];
 }
-[numthreads(16,1,1)]
-void Prefix(uint digit:SV_GroupIndex)
+// Level 1: scan 256 histogram groups in parallel for one digit per workgroup.
+[numthreads(256,1,1)]
+void PrefixBlocks(uint lane:SV_GroupIndex,uint3 gid:SV_GroupID)
 {
-    uint sum=0;
-    for(uint g=0;g<_Groups;g++) { _Offsets[g*16+digit]=sum;sum+=_Histogram[g*16+digit]; }
-    _Totals[digit]=sum;
+    uint group=gid.x*256+lane, digit=gid.y;
+    uint value=group<_Groups?_Histogram[group*16+digit]:0;
+    scan[lane]=value;GroupMemoryBarrierWithGroupSync();
+    for(uint offset=1;offset<256;offset<<=1)
+    {
+        uint add=lane>=offset?scan[lane-offset]:0;
+        GroupMemoryBarrierWithGroupSync();scan[lane]+=add;GroupMemoryBarrierWithGroupSync();
+    }
+    if(group<_Groups)_Offsets[group*16+digit]=scan[lane]-value;
+    if(lane==255){_BlockSums[gid.x*16+digit]=scan[lane];if(_Blocks==1)_Totals[digit]=scan[lane];}
+}
+// Level 2: <=123 blocks for the supported 8 million visible splats.
+[numthreads(256,1,1)]
+void PrefixBlockSums(uint lane:SV_GroupIndex,uint3 gid:SV_GroupID)
+{
+    uint digit=gid.y;
+    uint value=lane<_Blocks?_BlockSums[lane*16+digit]:0;
+    scan[lane]=value;GroupMemoryBarrierWithGroupSync();
+    for(uint offset=1;offset<256;offset<<=1)
+    {
+        uint add=lane>=offset?scan[lane-offset]:0;
+        GroupMemoryBarrierWithGroupSync();scan[lane]+=add;GroupMemoryBarrierWithGroupSync();
+    }
+    if(lane<_Blocks)_BlockOffsets[lane*16+digit]=scan[lane]-value;
+    if(lane==255)_Totals[digit]=scan[lane];
 }
 [numthreads(256,1,1)]
 void Scatter(uint id:SV_DispatchThreadID,uint lane:SV_GroupIndex,uint3 gid:SV_GroupID)
@@ -45,12 +83,13 @@ void Scatter(uint id:SV_DispatchThreadID,uint lane:SV_GroupIndex,uint3 gid:SV_Gr
     if(lane<128)masks[lane]=0;
     GroupMemoryBarrierWithGroupSync();
     uint2 pair=uint2(0,0);uint digit=0;
-    if(id<_Count) { pair=_Source[id];digit=(pair.x>>_Shift)&15;InterlockedOr(masks[digit*8+lane/32],1u<<(lane%32)); }
+    if(id<_Count){pair=_Source[id];digit=(pair.x>>_Shift)&15;InterlockedOr(masks[digit*8+lane/32],1u<<(lane%32));}
     GroupMemoryBarrierWithGroupSync();
     if(id>=_Count)return;
     uint rank=0;
     for(uint word=0;word<lane/32;word++)rank+=countbits(masks[digit*8+word]);
     rank+=countbits(masks[digit*8+lane/32]&((1u<<(lane%32))-1u));
     uint base=0;for(uint d=0;d<digit;d++)base+=_Totals[d];
-    _Destination[base+_Offsets[gid.x*16+digit]+rank]=pair;
+    uint blockBase=_Blocks>1?_BlockOffsets[(gid.x/256)*16+digit]:0;
+    _Destination[base+blockBase+_Offsets[gid.x*16+digit]+rank]=pair;
 }

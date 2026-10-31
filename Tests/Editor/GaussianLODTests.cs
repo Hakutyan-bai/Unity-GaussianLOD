@@ -14,6 +14,18 @@ namespace GaussianSplatLOD.Tests
 {
     public sealed class GaussianLODTests
     {
+        [Test] public void FPSResumeKeepsNavigationViewIncludingPitchOutsideManualLimits()
+        {
+            var go=new GameObject("FPS navigation resume regression");var c=go.AddComponent<GaussianLODDemoCamera>();
+            try{
+                c.CaptureCursor();c.enabled=false;
+                go.transform.rotation=Quaternion.Euler(4,145,0);var arrival=go.transform.rotation;
+                // Runtime OnEnable is exercised by the PlayMode cursor regression.
+                c.enabled=true;c.CaptureCursor();c.ApplyLook(0,0);
+                Assert.That(Quaternion.Angle(arrival,go.transform.rotation),Is.LessThan(.01),"Capturing must not clamp the look-at pose.");
+                c.ApplyLook(0,-1);Assert.That(c.RotationX,Is.EqualTo(6).Within(.001),"Returning to manual limits should be gradual.");
+            }finally{c.ReleaseCursor();UnityEngine.Object.DestroyImmediate(go);}
+        }
         [Test] public void FPSNormalizesRollMigratesOldLimitsAndPreservesViewDirection()
         {
             var go=new GameObject("FPS pitch regression");var c=go.AddComponent<GaussianLODDemoCamera>();
@@ -23,7 +35,7 @@ namespace GaussianSplatLOD.Tests
                 Assert.AreEqual(10,c.minRotationX);Assert.AreEqual(60,c.maxRotationX);
                 c.ApplyLook(0,1000);Assert.AreEqual(10,c.RotationX);c.ApplyLook(0,-1000);Assert.AreEqual(60,c.RotationX);
                 var before=go.transform.rotation;c.ReleaseCursor();c.CaptureCursor();Assert.That(Quaternion.Angle(before,go.transform.rotation),Is.LessThan(.01));
-                c.ApplyLook(5,0);Assert.AreEqual(60,c.RotationX);Assert.Greater(Quaternion.Angle(before,go.transform.rotation),1);
+                c.ApplyLook(5,0);Assert.That(c.RotationX,Is.EqualTo(60).Within(.001));Assert.Greater(Quaternion.Angle(before,go.transform.rotation),1);
                 c.ReleaseCursor();Assert.IsTrue(Cursor.visible);Assert.AreEqual(CursorLockMode.None,Cursor.lockState);
             }finally{c.ReleaseCursor();UnityEngine.Object.DestroyImmediate(go);}
         }

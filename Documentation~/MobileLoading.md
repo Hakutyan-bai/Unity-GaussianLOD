@@ -1,4 +1,6 @@
-# 快速加载与 PICO / iPhone 部署准备
+# v0.1 历史记录：快速加载与 PICO / iPhone 部署准备
+
+> 本页保留 v0.1 的实现、旧预算及当时测试记录，不代表 v0.2 当前功能。v0.2 已加入 Android 按需文件落盘、逐眼矩阵与立体 Shader 路径，PICO 起始预算也已调整；请以 [PICO.md](PICO.md) 和 [PICO-Validation.md](PICO-Validation.md) 为准。后文的“当前”“尚无”和部署限制均指 v0.1 当时状态。
 
 当前完成的是可在 Windows Editor 验证的加载优化。PICO 4 Ultra 的 Android/Vulkan/XR 双眼渲染和 iPhone 14 的 iOS/Metal/IL2CPP 尚未完成真机适配验证，不属于已交付的平台支持。现有 Shader 尚无 single-pass stereo 宏及逐眼协方差投影，不能把单目预览当成 VR 已支持。
 

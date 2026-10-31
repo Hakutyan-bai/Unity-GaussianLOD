@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace GaussianSplatLOD
@@ -131,6 +132,59 @@ namespace GaussianSplatLOD
                 }
             }
             return output;
+        }
+
+        internal static async Task<GaussianSplat[]> ReadRangeAsync(string path, GaussianPLYHeader h, long offset,
+            int count, int degree, GaussianReadPipeline pipeline, CancellationToken cancellation)
+        {
+            if (offset < 0 || count < 0 || offset > h.VertexCount-count) throw new InvalidDataException("PLY 高斯记录区间越界: " + path);
+            if (h.SHDegree != degree) throw new InvalidDataException("PLY SH degree 与 JSON 不一致: " + path);
+            cancellation.ThrowIfCancellationRequested();
+            var output = new GaussianSplat[count];
+            if(count == 0) return output;
+            string[] names = { "x", "y", "z", "scale_0", "scale_1", "scale_2", "rot_0", "rot_1", "rot_2", "rot_3", "opacity", "f_dc_0", "f_dc_1", "f_dc_2" };
+            int coefficients = (degree+1)*(degree+1)-1;
+            var properties = new GaussianPLYHeader.Property[14+coefficients*3];
+            for(int i=0;i<14;i++) properties[i]=h.Properties[names[i]];
+            for(int i=0;i<coefficients*3;i++) properties[14+i]=h.Properties["f_rest_"+i];
+            var values = new float[properties.Length];
+            int batch = Math.Max(1,1048576/h.Stride);
+            byte[] bytes = pipeline.Rent(batch*h.Stride);
+            try
+            {
+                using var stream = new FileStream(path,FileMode.Open,FileAccess.Read,FileShare.Read,65536,FileOptions.Asynchronous|FileOptions.RandomAccess);
+                stream.Position=checked(h.DataOffset+offset*h.Stride);
+                for(int at=0;at<count;at+=batch)
+                {
+                    cancellation.ThrowIfCancellationRequested(); int n=Math.Min(batch,count-at), start=at;
+                    await pipeline.ReadExactlyAsync(stream,bytes,n*h.Stride,cancellation).ConfigureAwait(false);
+                    await pipeline.DecodeAsync(() => DecodeBatch(bytes,h,properties,values,coefficients,offset,start,n,output,cancellation),cancellation).ConfigureAwait(false);
+                }
+            }
+            finally { pipeline.Return(bytes); }
+            return output;
+        }
+        static unsafe void DecodeBatch(byte[] bytes,GaussianPLYHeader h,GaussianPLYHeader.Property[] properties,
+            float[] values,int coefficients,long offset,int start,int n,GaussianSplat[] output,CancellationToken cancellation)
+        {
+            fixed(byte* data=bytes) for(int j=0;j<n;j++)
+            {
+                if((j&255)==0)cancellation.ThrowIfCancellationRequested();
+                for(int a=0;a<properties.Length;a++)
+                {
+                    float v=Scalar(data+j*h.Stride,properties[a],h.BigEndian);
+                    if(!GaussianBox.Finite(v)&&!(a==10&&!float.IsNaN(v))) throw new InvalidDataException($"PLY 非有限属性，记录 {offset+start+j}, property {a}。");
+                    values[a]=v;
+                }
+                Vector3 scale=new Vector3((float)Math.Exp(values[3]),(float)Math.Exp(values[4]),(float)Math.Exp(values[5]));
+                if(!GaussianBox.Finite(scale.x*scale.x)||!GaussianBox.Finite(scale.y*scale.y)||!GaussianBox.Finite(scale.z*scale.z))throw new InvalidDataException("PLY scale 溢出。");
+                double norm=Math.Sqrt((double)values[6]*values[6]+(double)values[7]*values[7]+(double)values[8]*values[8]+(double)values[9]*values[9]);
+                if(norm<1e-12)throw new InvalidDataException("PLY 四元数长度为零。");
+                Quaternion q=new Quaternion((float)(values[7]/norm),(float)(values[8]/norm),(float)(values[9]/norm),(float)(values[6]/norm));
+                var splat=GaussianSplat.Create(new Vector3(values[0],values[1],values[2]),scale,q,(float)(1/(1+Math.Exp(-values[10]))),new Vector3(.5f+.2820947918f*values[11],.5f+.2820947918f*values[12],.5f+.2820947918f*values[13]));
+                for(int c=0;c<coefficients;c++)for(int rgb=0;rgb<3;rgb++)splat.SetSH(c*3+rgb,values[14+rgb*coefficients+c]);
+                output[start+j]=splat;
+            }
         }
     }
 }

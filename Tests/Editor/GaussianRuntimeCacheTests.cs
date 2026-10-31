@@ -46,7 +46,7 @@ namespace GaussianSplatLOD.Tests
         [Test] public void MobilePresetsRemainBoundedAndKeepCoherentCoverage()
         {
             var go=new GameObject("Mobile profile test");go.SetActive(false);
-            try{var r=go.AddComponent<GaussianLODRenderer>();r.ApplyMobilePreset(true);Assert.AreEqual(350000,r.maxVisibleSplats);Assert.AreEqual(384,r.maxGPUMemory);r.ApplyMobilePreset(false);Assert.AreEqual(200000,r.maxVisibleSplats);Assert.AreEqual(256,r.maxGPUMemory);Assert.IsTrue(r.coherentLOD&&r.enableAsyncLoading&&r.preferRuntimeCache);}finally{UnityEngine.Object.DestroyImmediate(go);}
+            try{var r=go.AddComponent<GaussianLODRenderer>();r.ApplyMobilePreset(true);Assert.AreEqual(1000000,r.maxVisibleSplats);Assert.AreEqual(640,r.maxGPUMemory);Assert.AreEqual(384,r.maxCPUCache);Assert.AreEqual(2000000,r.maxResidentSplats);r.ApplyMobilePreset(false);Assert.AreEqual(200000,r.maxVisibleSplats);Assert.AreEqual(256,r.maxGPUMemory);Assert.IsTrue(r.coherentLOD&&r.enableAsyncLoading&&r.preferRuntimeCache);}finally{UnityEngine.Object.DestroyImmediate(go);}
         }
         [TestCase(false,false)] [TestCase(true,false)] [TestCase(true,true)]
         public void LoaderUsesValidCacheAndFallsBackWhenStaleOrDisabled(bool prefer,bool stale)
